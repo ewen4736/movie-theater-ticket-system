@@ -1,0 +1,174 @@
+#include "stdafx.h"
+#include <iostream>
+#include <iomanip>
+
+using namespace std;
+
+const int ROWS = 9;
+const int COLUMNS = 10;
+
+void display_seating_chart(int chart[][10])
+{
+	cout << setw(38) << "SEATING CHART & PRICES" << endl;
+	cout << setw(35) << "C  O  L  U  M  N" << endl;
+	cout << " +---------------------------------------------------+" << endl;
+	
+	// Print out the initial array
+	for (int i = 0; i < 9; i++)
+	{
+		if (i == 2)
+		{
+			cout << "R" << "|" << " ";
+		}
+		else if (i == 4)
+		{
+			cout << "O" << "|" << " ";
+		}
+		else if (i == 6)
+		{
+			cout << "W" << "|" << " ";
+		}
+		else
+		{
+			cout << " " << "|" << " ";
+		}
+
+		for (int j = 0; j < 10; j++)
+		{
+			cout << " " << setw(2) << chart[i][j] << "  ";
+		}
+		cout << "|" << endl;
+	}
+	cout << " +---------------------------------------------------+" << endl;
+}
+
+
+	// Get the user input function
+void get_user_input(char& input1, int& input2, int& input3)
+{
+	cout << "Please enter ticket purchase in one of the following two formats: " << endl;
+	cout << "Formats: S R C" << endl << "         where S indicates purchase by seat location" << endl << "               R indicates row number (1-9)" << endl << "               C indicates column number (1-10)" << endl;
+	cout << "         or" << endl;
+	cout << "         P V" << endl << "         where P indicates purchase by ticket price" << endl << "               V indicates the price amount" << endl;
+	cout << "Enter 'x' to exit" << endl;
+
+	cout << "Selection: ";
+	
+	cin >> input1;
+	if ((input1 == 'X') || (input1 == 'x'))
+	{
+		return;
+	}
+
+	if ((input1 == 'S') || (input1 == 's'))
+	{
+		cin >> input2;
+		cin >> input3;
+	}
+
+	if ((input1 == 'P') || (input1 == 'p'))
+	{
+		cin >> input2;
+	}
+
+}
+	// Process the user input
+bool process_user_input(char input1, int input2, int input3, int chart[][10])
+{
+	if ((input1 == 'X') || (input1 == 'x'))
+	{
+		return true;
+	}
+
+	if ((input1 == 'S') || (input1 == 's'))
+	{
+		if (input2 < 1 && input2 > ROWS)
+		{
+			cout << "Invalid input; the row number must be between 1 and 9" << endl;
+			return false;
+		}
+
+		if (input3 < 1 && input3 > COLUMNS)
+		{
+			cout << "Invalid input; the column number must be between 1 and 10" << endl;
+			return false;
+		}
+		
+		int row = input2 - 1;
+		int column = input3 - 1;
+		if (chart[row][column] != 0)
+		{
+			cout << "The seat is available, and it costs " << chart[row][column] << "." << endl;
+			chart[row][column] = 0;
+			return true;
+		}
+		else
+		{
+			cout << "The seat is unavailable. Please select another seat." << endl;
+			return false;
+		}
+	}
+
+	if ((input1 == 'P') || (input1 == 'p'))
+	{
+		bool found = false;
+		for (int i = 0; i < ROWS; i++)
+		{
+			for (int j = 0; j < COLUMNS; j++)
+			{
+				if (chart[i][j] == input2)
+				{
+					cout << "The seat is available at row " << (i + 1) << " and column " << (j + 1) << " at the price of " << input2 << " dollars." << endl << endl;
+					chart[i][j] = 0;
+					found = true;
+					break;
+				}
+			}
+			if (found == true)
+			{
+				break;
+			}
+		}
+		if (found == false)
+		{
+			cout << "There is no seat available at this price. Please choose another price." << endl;
+			return false;
+		}
+	}
+	
+	return true;
+}
+
+int main()
+{
+	// Set the initial array of the seating chart and its prices
+	int seating_chart[ROWS][COLUMNS] =
+	{
+		{ 10, 10, 10, 10, 10, 10, 10, 10, 10, 10 },
+		{ 10, 10, 10, 10, 10, 10, 10, 10, 10, 10 },
+		{ 10, 10, 10, 10, 10, 10, 10, 10, 10, 10 },
+		{ 10, 10, 20, 20, 20, 20, 20, 20, 20, 20 },
+		{ 10, 10, 20, 20, 20, 20, 20, 20, 20, 20 },
+		{ 10, 10, 20, 20, 20, 20, 20, 20, 20, 20 },
+		{ 20, 20, 30, 30, 40, 40, 30, 30, 20, 20 },
+		{ 20, 30, 30, 40, 50, 50, 40, 30, 30, 20 },
+		{ 30, 40, 50, 50, 50, 50, 50, 50, 40, 30 },
+	};
+
+	char input1 = ' ';
+	int input2 = 0;
+	int input3 = 0;
+	bool result = false;
+
+	do {
+		display_seating_chart(seating_chart);
+
+		do 
+		{
+			get_user_input(input1, input2, input3);
+			result = process_user_input(input1, input2, input3, seating_chart);
+		} while (result == false);
+
+	} while (input1 != 'X' && input1 != 'x');
+	return 0;
+}
